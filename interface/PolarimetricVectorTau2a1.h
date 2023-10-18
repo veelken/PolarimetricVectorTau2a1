@@ -54,42 +54,89 @@ class PolarimetricVectorTau2a1
 
   enum DecayChannel { k3ChargedPi, kChargedPi2NeutralPi };
 
-  // 
+  /**
+   * @brief Compute polarimeter vector H according to Eq. (3.14) in Comput.Phys.Commun. 64 (1991) 275
+   * @param p1 four-vector of first  same-sign pion [1,2]
+   * @param p2 four-vector of second same-sign pion [1,2]
+   * @param p3 four-vector of opposite-sign pion    [3]
+   * @param charge tau lepton charge [4]
+   * @param decayChannel flag indicating whether a1 decays into three charged pions or into one charged pion plus two neutral pions [5]
+   *
+   * The three pion four-vectors are expected to be given in the tau lepton rest-frame
+   *
+   *  [1] the two pi- in tau- -> pi- pi+ pi- nu decays
+   *          two pi+ in tau+ -> pi+ pi- pi+ nu decays
+   *          two neutral pions in tau+/- -> pi+/- pi0 pi0 nu decays
+   *  [2] the ordering of the two same-sign pions does not matter
+   *  [3] the pi+ in tau- -> pi- pi+ pi- nu decays
+   *          pi- in tau+ -> pi+ pi- pi+ nu decays
+   *          charged pion in tau+/- -> pi+/- pi0 pi0 nu decays
+   *  [4] use -1 for tau-
+   *          +1 for tau+
+   *  [5] use k3ChargedPi for tau- -> pi- pi+ pi- nu and tau+ -> pi+ pi- pi+ nu decays
+   *          kChargedPi2NeutralPi for tau+/- -> pi+/- pi0 pi0 nu decays
+   *
+   * @return H
+   */
   Vector
   operator()(const LorentzVector& p1, const LorentzVector& p2, const LorentzVector& p3, 
              int charge,
              DecayChannel decayChannel);
 
  private:
-  // hadronic current J,
-  // computed according to Eq. (3) in Phys.Rev.D 61 (2000) 012002
+  /**
+   * @brief Compute hadronic current J according to Eq. (3) in Phys.Rev.D 61 (2000) 012002
+   * @param p1 four-vector of first  same-sign pion [1,2]
+   * @param p2 four-vector of second same-sign pion [1,2]
+   * @param p3 four-vector of opposite-sign pion    [3] 
+   * @param decayChannel flag indicating whether a1 decays into three charged pions or into one charged pion plus two neutral pions [4]
+   *
+   * The three pion four-vectors are expected to be given in the tau lepton rest-frame
+   *
+   *  [1] the two pi- in tau- -> pi- pi+ pi- nu decays
+   *          two pi+ in tau+ -> pi+ pi- pi+ nu decays
+   *          two neutral pions in tau+/- -> pi+/- pi0 pi0 nu decays
+   *  [2] the ordering of the two same-sign pions does not matter
+   *  [3] the pi+ in tau- -> pi- pi+ pi- nu decays
+   *          pi- in tau+ -> pi+ pi- pi+ nu decays
+   *          charged pion in tau+/- -> pi+/- pi0 pi0 nu decays
+   *  [4] use k3ChargedPi for tau- -> pi- pi+ pi- nu and tau+ -> pi+ pi- pi+ nu decays
+   *          kChargedPi2NeutralPi for tau+/- -> pi+/- pi0 pi0 nu decays
+   *
+   * @return J
+   */
   cLorentzVector
   J(const LorentzVector& p1, const LorentzVector& p2, const LorentzVector& p3, 
     DecayChannel decayChannel) const;
 
-  // "running mass" of the a1 meson
+  /**
+   * @brief Compute "running mass" of a1 meson.
+   *        The "running mass" of the a1 meson can only be computed for non-zero values of the a1 size parameter R.
+   *        Since the nominal fit sets R equal to zero, we take the a1 mass to be constant,
+   *        following Section VI.C.2 in Phys.Rev.D 61 (2000) 012002.
+   * @param s (mass of three-pion system)^2
+   * @return m_a1(s)
+   */
   double
   m_a1(double s) const;
 
-  // "running width" of the a1 meson,
-  // computed according to Eq. (11) in Phys.Rev.D 61 (2000) 012002
+  /**
+   * @brief Compute "running width" of a1 meson.
+   *        Instead of implementing the "running" of the a1 width according to Eq. (11),
+   *        we interpolate (linearly) between the Gamma_tot values shown in Fig. 9 (b) of Phys.Rev.D 61 (2000) 012002
+   * @param s (mass of three-pion system)^2
+   * @return Gamma_a1(s)
+   */
   double
   Gamma_a1(double s) const;
 
-  // Breit-Wigner function of a1 meson,
-  // computed according to Eq. (7) in Phys.Rev.D 61 (2000) 012002
+  /**
+   * @brief Compute Breit-Wigner function of a1 meson, given by first term on the right-hand-side of Eq. (7) in Phys.Rev.D 61 (2000) 012002
+   * @param s (mass of three-pion system)^2
+   * @return B_a1(s)
+   */
   cdouble
   BreitWigner_a1(double s) const;
-
-  // Breit-Wigner function of intermediate rho(770), rho(1450), f2(1270), sigma, f0(1370) resonances,
-  // computed according to top line of Eq. (A7) in Phys.Rev.D 61 (2000) 012002
-  cdouble
-  BreitWigner(double m0, double Gamma0, double si, double mj, double mk, unsigned L) const;
-
-  // "running width" of intermediate rho(770), rho(1450), f2(1270), sigma, f0(1370) resonances,
-  // computed according to bottom line of Eq. (A7) in Phys.Rev.D 61 (2000) 012002
-  double
-  Gamma(double m0, double Gamma0, double si, double mj, double mk, unsigned L) const;
 
   // mass of charged and neutral pion
   double m_chargedPi_;    // mass of charged pion     [GeV]
