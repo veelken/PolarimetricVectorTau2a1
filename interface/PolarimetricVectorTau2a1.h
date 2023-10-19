@@ -84,6 +84,12 @@ class PolarimetricVectorTau2a1
              DecayChannel decayChannel);
 
  private:
+  LorentzVector
+  comp_Pi(const PolarimetricVectorTau2a1::cLorentzVector& J, const LorentzVector& N) const;
+
+  LorentzVector
+  comp_Pi5(const PolarimetricVectorTau2a1::cLorentzVector& J, const LorentzVector& N, int charge) const;
+
   /**
    * @brief Compute hadronic current J according to Eq. (3) in Phys.Rev.D 61 (2000) 012002
    * @param p1 four-vector of first  same-sign pion [1,2]
@@ -106,8 +112,8 @@ class PolarimetricVectorTau2a1
    * @return J
    */
   cLorentzVector
-  J(const LorentzVector& p1, const LorentzVector& p2, const LorentzVector& p3, 
-    DecayChannel decayChannel) const;
+  comp_J(const LorentzVector& p1, const LorentzVector& p2, const LorentzVector& p3, 
+         DecayChannel decayChannel) const;
 
   /**
    * @brief Compute "running mass" of a1 meson.
@@ -138,7 +144,8 @@ class PolarimetricVectorTau2a1
   cdouble
   BreitWigner_a1(double s) const;
 
-  // mass of charged and neutral pion
+  // mass of tau lepton, charged and neutral pion
+  double m_tau_;          // mass of tau lepton       [GeV]
   double m_chargedPi_;    // mass of charged pion     [GeV]
   double m_neutralPi_;    // mass of neutral pion     [GeV]
 
