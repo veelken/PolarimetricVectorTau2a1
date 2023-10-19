@@ -81,7 +81,7 @@ class PolarimetricVectorTau2a1
   Vector
   operator()(const LorentzVector& p1, const LorentzVector& p2, const LorentzVector& p3, 
              int charge,
-             DecayChannel decayChannel);
+             DecayChannel decayChannel) const;
 
  private:
   LorentzVector

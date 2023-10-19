@@ -18,17 +18,70 @@ namespace
    * @return complex number
    */
   PolarimetricVectorTau2a1::cdouble
-  get_complex(double modulus, double phase)
+  get_beta(double modulus, double phase)
   {
     double re = modulus*std::cos(phase);
     double im = modulus*std::sin(phase);
     return PolarimetricVectorTau2a1::cdouble(re, im);
+  }
+
+  /**
+   * @brief Auxiliary functions to print-out complex number, real and complex four-vectors 
+   *       (to be used only for debugging purposes)
+   * @param os reference to std::cout
+   * @param val complex number or four-vector to be printed-out
+   * @return os
+   */
+  std::ostream&
+  operator<<(std::ostream& os, const PolarimetricVectorTau2a1::cdouble& val)
+  {
+    os << val.real();
+    os << ( val.imag() >= 0. ? " + " : " - " );
+    os << std::fabs(val.imag()) << "i";
+    return os;
+  }
+
+  void
+  print(const std::string& label, const PolarimetricVectorTau2a1::cdouble& val)
+  {
+    std::cout << label << ": " << val << "\n";
+  }
+
+  std::ostream&
+  operator<<(std::ostream& os, const PolarimetricVectorTau2a1::cLorentzVector& val)
+  {
+    os << "E = " << val(3) << ", Px = " << val(0) << ", Py = " << val(1) << ", Pz = " << val(2);
+    return os;
+  }
+
+  void
+  print(const std::string& label, const PolarimetricVectorTau2a1::cLorentzVector& val)
+  {
+    std::cout << label << ": " << val << "\n";
+  }
+
+  std::ostream&
+  operator<<(std::ostream& os, const PolarimetricVectorTau2a1::LorentzVector& val)
+  {
+    os << "E = " << val.energy() << ", Px = " << val.px() << ", Py = " << val.py() << ", Px = " << val.pz();
+    return os;
+  }
+
+  void
+  print(const std::string& label, const PolarimetricVectorTau2a1::LorentzVector& val)
+  {
+    std::cout << label << ": " << val << "\n";
   }
 }
 
 PolarimetricVectorTau2a1::PolarimetricVectorTau2a1(int verbosity)
   : verbosity_(verbosity)
 {
+  if ( verbosity_ >= 2 )
+  {
+    std::cout << "<PolarimetricVectorTau2a1::PolarimetricVectorTau2a1>:\n";
+  }
+
   // define mass of tau lepton, charged and neutral pion;
   // values are taken from Prog. Theor. Exp. Phys. 2022 (2022) 083C01 (PDG)
   m_tau_          = 1.7769;   // [GeV]
@@ -37,8 +90,11 @@ PolarimetricVectorTau2a1::PolarimetricVectorTau2a1(int verbosity)
 
   // define mass and width of a1(1260) meson;
   // values are taken from column "nominal fit" in Table VI of Phys.Rev.D 61 (2000) 012002
-  m0_a1_          = 1.331;    // [GeV]
-  Gamma0_a1_      = 0.814;    // [GeV]
+  //m0_a1_          = 1.331;    // [GeV]
+  //Gamma0_a1_      = 0.814;    // [GeV]
+  // values are taken from Prog. Theor. Exp. Phys. 2022 (2022) 083C01 (PDG)
+  m0_a1_          = 1.230;    // [GeV]
+  Gamma0_a1_      = 0.420;    // [GeV]
 
   // define parameters specifying "running" of a1 width;
   // the values of Gamma_a1 as function of s have been taken from Fig. 9 (b) of Phys.Rev.D 61 (2000) 012002
@@ -77,7 +133,12 @@ PolarimetricVectorTau2a1::PolarimetricVectorTau2a1(int verbosity)
   assert(beta_moduli.size() == numResonances && beta_phases.size() == numResonances);
   for ( size_t idxResonance = 0; idxResonance < numResonances; ++idxResonance )
   {
-    beta_.push_back(get_complex(beta_moduli[idxResonance], beta_phases[idxResonance]));    
+    cdouble beta = get_beta(beta_moduli[idxResonance], beta_phases[idxResonance]*TMath::Pi());
+    if ( verbosity_ >= 2 )
+    {
+      std::cout << "beta[" << idxResonance << "] = " << beta << "\n";
+    }
+    beta_.push_back(beta);
   }
 }
 
@@ -86,54 +147,6 @@ PolarimetricVectorTau2a1::~PolarimetricVectorTau2a1()
 
 namespace
 {
-  /**
-   * @brief Auxiliary functions to print-out complex number, real and complex four-vectors 
-   *       (to be used only for debugging purposes)
-   * @param os reference to std::cout
-   * @param val complex number or four-vector to be printed-out
-   * @return os
-   */
-  std::ostream&
-  operator<<(std::ostream& os, PolarimetricVectorTau2a1::cdouble val)
-  {
-    os << val.real();
-    os << ( val.imag() >= 0. ? " + " : " - " );
-    os << std::fabs(val.imag());
-    return os;
-  }
-
-  //void
-  //print(const std::string& label, PolarimetricVectorTau2a1::cdouble val)
-  //{
-  //  std::cout << label << ": " << val << "\n";
-  //}
-
-  std::ostream&
-  operator<<(std::ostream& os, const PolarimetricVectorTau2a1::cLorentzVector& val)
-  {
-    os << "E = " << val(3) << ", Px = " << val(0) << ", Py = " << val(1) << ", Pz = " << val(2) << "\n";
-    return os;
-  }
-
-  void
-  print(const std::string& label, const PolarimetricVectorTau2a1::cLorentzVector& val)
-  {
-    std::cout << label << ": " << val << "\n";
-  }
-
-  std::ostream&
-  operator<<(std::ostream& os, const PolarimetricVectorTau2a1::LorentzVector& val)
-  {
-    os << "E = " << val.energy() << ", Px = " << val.px() << ", Py = " << val.py() << ", Px = " << val.pz() << "\n";
-    return os;
-  }
-
-  void
-  print(const std::string& label, const PolarimetricVectorTau2a1::LorentzVector& val)
-  {
-    std::cout << label << ": " << val << "\n";
-  }
-
   /**
    * @brief Convert four-vector of type cLorentzVector to type LorentzVector. 
    * Note: The imaginary part of the four-vector given as function argument is discarded in the conversion.
@@ -151,7 +164,7 @@ namespace
 PolarimetricVectorTau2a1::Vector
 PolarimetricVectorTau2a1::operator()(const LorentzVector& p1, const LorentzVector& p2, const LorentzVector& p3,
                                      int charge,
-                                     DecayChannel decayChannel)
+                                     DecayChannel decayChannel) const
 {
   if ( verbosity_ >= 2 )
   {
@@ -353,12 +366,13 @@ PolarimetricVectorTau2a1::comp_Pi5(const cLorentzVector& J, const LorentzVector&
     }
   }
 
-  double sign = 0.;
-  if      ( charge == +1 ) sign = -1.;
-  else if ( charge == -1 ) sign = +1.;
-  else assert(0);
+  //double sign = 0.;
+  //if      ( charge == +1 ) sign = -1.;
+  //else if ( charge == -1 ) sign = +1.;
+  //else assert(0);
 
-  LorentzVector retVal(sign*2.*sum(0).imag(), sign*2.*sum(1).imag(), sign*2.*sum(2).imag(), -sign*2.*sum(3).imag());
+  //LorentzVector retVal(sign*2.*sum(0).imag(), sign*2.*sum(1).imag(), sign*2.*sum(2).imag(), -sign*2.*sum(3).imag());
+  LorentzVector retVal(2.*sum(0).imag(), 2.*sum(1).imag(), 2.*sum(2).imag(), 2.*sum(3).imag());
   if ( verbosity_ >= 2 )
   {
     print("Pi5", retVal);
@@ -416,10 +430,20 @@ namespace
    * @return Gamma^{Y,L}(s_i)
    */
   double
-  Gamma(double m0, double Gamma0, double si, double mj, double mk, unsigned L)
+  Gamma(double m0, double Gamma0, double si, double mj, double mk, unsigned L, int verbosity = -1)
   {
+    if ( verbosity >= 2 )
+    {
+      std::cout << "<Gamma>:\n";
+    }
+
     double kdashi = kdash(si, mj, mk);
     double kdash0 = kdash(pow(m0, 2), mj, mk);
+    if ( verbosity >= 2 )
+    {
+      std::cout << "kdashi = " << kdashi << "\n";
+      std::cout << "kdash0 = " << kdash0 << "\n";
+    }
 
     double retVal = Gamma0*pow(kdashi/kdash0, 2*L + 1)*m0/std::sqrt(si);
     return retVal;
@@ -440,10 +464,27 @@ namespace
    * @return B^{L}_{Y}(s_i)
    */
   PolarimetricVectorTau2a1::cdouble
-  BreitWigner(double m0, double Gamma0, double si, double mj, double mk, unsigned L)
+  BreitWigner(double m0, double Gamma0, double si, double mj, double mk, unsigned L, int verbosity = -1)
   {
+    if ( verbosity >= 2 )
+    {
+      std::cout << "<BreitWigner>:\n";
+      std::cout << "m0 = " << m0 << "\n";
+      std::cout << "Gamma0 = " << Gamma0 << "\n";
+      std::cout << "si = " << si << "\n";
+      std::cout << "mj = " << mj << "\n";
+      std::cout << "mk = " << mk << "\n";
+      std::cout << "L = " << L << "\n";
+    }
+
     double num = pow(m0, 2);
-    PolarimetricVectorTau2a1::cdouble denom(pow(m0, 2) - si, -m0*Gamma(m0, Gamma0, si, mj, mk, L));
+    PolarimetricVectorTau2a1::cdouble denom(pow(m0, 2) - si, -m0*Gamma(m0, Gamma0, si, mj, mk, L, verbosity));
+    if ( verbosity >= 2 )
+    {
+      std::cout << "num = " << num << "\n";
+      std::cout << "denom = " << denom << "\n";
+    }
+
     PolarimetricVectorTau2a1::cdouble retVal = PolarimetricVectorTau2a1::cdouble(num, 0.)/denom;
     return retVal;
   }
@@ -471,6 +512,12 @@ PolarimetricVectorTau2a1::comp_J(const LorentzVector& p1, const LorentzVector& p
   LorentzVector h3 = p1 + p2;
   LorentzVector Q3 = h3 - p3;
   double s3 = h3.mag2();
+  if ( verbosity_ >= 2 )
+  {
+    std::cout << "s1 = " << s1 << "\n";
+    std::cout << "s2 = " << s2 << "\n";
+    std::cout << "s3 = " << s3 << "\n";
+  }
 
   double m1, m2, m3;
   if ( decayChannel == k3ChargedPi )
@@ -493,6 +540,10 @@ PolarimetricVectorTau2a1::comp_J(const LorentzVector& p1, const LorentzVector& p
   
   LorentzVector a = p1 + p2 + p3;
   double s = a.mag2();
+  if ( verbosity_ >= 2 )
+  {
+    std::cout << "s = " << s << "\n";
+  }
 
   cTensor T;
   for ( size_t mu = 0; mu < 4; ++mu )
@@ -501,6 +552,11 @@ PolarimetricVectorTau2a1::comp_J(const LorentzVector& p1, const LorentzVector& p
     {
       T(mu,nu) = g(mu,nu) - get_component(a, mu)*get_component(a, nu)/s;
     }
+  }
+  if ( verbosity_ >= 2 )
+  {
+    std::cout << "T:\n";
+    std::cout << T << "\n";
   }
   
   // compute amplitudes for individual resonances according to Eq. (A3) in Phys.Rev.D 61 (2000) 012002
@@ -528,6 +584,13 @@ PolarimetricVectorTau2a1::comp_J(const LorentzVector& p1, const LorentzVector& p
   j[6] = T*(BreitWigner(m0_f0_, Gamma0_f0_, s3, m1, m2, 0)*cQ3);
   if ( verbosity_ >= 2 )
   {
+    print("B_rho^P(s1)", BreitWigner(m0_rho770_, Gamma0_rho770_, s1, m2, m3, 1, verbosity_));
+    print("B_rho'^P(s1)", BreitWigner(m0_rho1450_, Gamma0_rho1450_, s1, m2, m3, 1, verbosity_));
+    print("B_rho^P(s2)", BreitWigner(m0_rho770_, Gamma0_rho770_, s2, m1, m3, 1, verbosity_));
+    print("B_rho'^P(s2)", BreitWigner(m0_rho1450_, Gamma0_rho1450_, s2, m1, m3, 1, verbosity_));
+    print("B_f2^D(s3)", BreitWigner(m0_f2_, Gamma0_f2_, s3, m1, m2, 2, verbosity_));
+    print("B_sigma^S(s3)", BreitWigner(m0_sigma_, Gamma0_sigma_, s3, m1, m2, 0, verbosity_));
+    print("B_f0^S(s3)", BreitWigner(m0_f0_, Gamma0_f0_, s3, m1, m2, 0, verbosity_));
     for ( size_t idx = 0; idx < numResonances; ++idx )
     {
       print(Form("j[%lu]", idx), j[idx]);
@@ -557,6 +620,11 @@ PolarimetricVectorTau2a1::m_a1(double s) const
 double
 PolarimetricVectorTau2a1::Gamma_a1(double s) const
 {
+  if ( verbosity_ >= 2 )
+  {
+    std::cout << "<PolarimetricVectorTau2a1::Gamma_a1>:\n";
+  } 
+
   double retVal = 0.;
   bool retVal_isInitialized = false;
   if ( s <= Gamma_a1_vs_s_.front().first )
@@ -587,6 +655,11 @@ PolarimetricVectorTau2a1::Gamma_a1(double s) const
       }
     }
   }
+  if ( verbosity_ >= 2 )
+  {
+    std::cout << "Gamma(s = " << s << ") = " << retVal << "\n";
+  }
+
   assert(retVal_isInitialized);
   return retVal;
 }
@@ -594,6 +667,18 @@ PolarimetricVectorTau2a1::Gamma_a1(double s) const
 PolarimetricVectorTau2a1::cdouble
 PolarimetricVectorTau2a1::BreitWigner_a1(double s) const
 {
+  if ( verbosity_ >= 2 )
+  {
+    std::cout << "<PolarimetricVectorTau2a1::BreitWigner_a1>:\n";
+  }
+
   PolarimetricVectorTau2a1::cdouble retVal(s - pow(m_a1(s), 2), m0_a1_*Gamma_a1(s));
+  if ( verbosity_ >= 2 )
+  {
+    std::cout << "s - pow(m_a1(s), 2) = " << s - pow(m_a1(s), 2) << "\n";
+    std::cout << "m0_a1_*Gamma_a1(s) = " << m0_a1_*Gamma_a1(s) << "\n";
+    std::cout << "B_a1(s = " << s << ") = " << retVal << "\n";
+  }
+
   return retVal;
 }
