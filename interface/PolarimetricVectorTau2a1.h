@@ -49,7 +49,7 @@ class PolarimetricVectorTau2a1
 
   typedef ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<double>> Vector;
 
-  PolarimetricVectorTau2a1(int verbosity = -1);
+  PolarimetricVectorTau2a1();
   ~PolarimetricVectorTau2a1();
 
   enum DecayChannel { k3ChargedPi, kChargedPi2NeutralPi };
@@ -115,15 +115,6 @@ class PolarimetricVectorTau2a1
   comp_J(const LorentzVector& p1, const LorentzVector& p2, const LorentzVector& p3, 
          DecayChannel decayChannel) const;
 
-  cLorentzVector
-  comp_J2(const LorentzVector& p1, const LorentzVector& p2, const LorentzVector& p3, 
-          DecayChannel decayChannel) const;
-
-  PolarimetricVectorTau2a1::cdouble
-  comp_Fi(unsigned i,
-          const LorentzVector& p1, const LorentzVector& p2, const LorentzVector& p3,
-          DecayChannel decayChannel) const;
-
   /**
    * @brief Compute "running mass" of a1 meson.
    *        The "running mass" of the a1 meson can only be computed for non-zero values of the a1 size parameter R.
@@ -183,12 +174,6 @@ class PolarimetricVectorTau2a1
 
   // metric tensor g^{mu,nu} = g_{mu,nu}
   cTensor g_;
-  
-  // verbosity:
-  //   -1 no output
-  //    1 minimal output
-  //  > 1 extensive output (to be used only for debugging purposes)
-  int verbosity_;
 };
 
 #endif
