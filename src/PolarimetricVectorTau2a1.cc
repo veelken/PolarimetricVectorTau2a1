@@ -412,9 +412,11 @@ PolarimetricVectorTau2a1::comp_J(const LorentzVector& p1, const LorentzVector& p
   {
     for ( size_t nu = 0; nu < 4; ++nu )
     {
-      // CV: all vectors without explicite mu indices are assumed to have the mu index as subscript,
+      // CV: all vectors without explicit mu indices are assumed to have the mu index as subscript,
       //     hence multiplication with the product of metric tensors g^{mu,mu}*g^{nu,nu} is required to transform
-      //     the expression get_component(a, mu)*get_component(a, nu) into a^{mu}*a^{nu}
+      //     the return value of the functions get_component(a, mu)*get_component(a, nu) into the expression a^{mu}*a^{nu}
+      //     when computing T^{mu,nu} = g^{mu,nu} - a^{mu}a^{nu}/a^2,
+      //     as described in text following Eq. (A2) in Phys.Rev.D 61 (2000) 012002
       T(mu,nu) = g_(mu,nu) - g_(mu,mu)*g_(nu,nu)*get_component(a, mu)*get_component(a, nu)/s;
     }
   }
@@ -482,6 +484,7 @@ PolarimetricVectorTau2a1::Gamma_a1(double s) const
     {
       double s_lo = Gamma_a1_vs_s_[idx].first;
       double s_hi = Gamma_a1_vs_s_[idx + 1].first;
+      assert(s_hi > s_lo);
       if ( s >= s_lo && s <= s_hi )
       {
         double Gamma_lo = Gamma_a1_vs_s_[idx].second;
