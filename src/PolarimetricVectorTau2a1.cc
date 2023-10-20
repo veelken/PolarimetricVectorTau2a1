@@ -100,6 +100,7 @@ PolarimetricVectorTau2a1::PolarimetricVectorTau2a1()
     beta_.push_back(beta);
   }
 
+  // initialize metric tensor g^{mu,nu}
   for ( size_t mu = 0; mu < 4; ++mu )
   {
     for ( size_t nu = 0; nu < 4; ++nu )
