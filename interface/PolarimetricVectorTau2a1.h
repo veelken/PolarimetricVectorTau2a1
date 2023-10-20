@@ -115,6 +115,15 @@ class PolarimetricVectorTau2a1
   comp_J(const LorentzVector& p1, const LorentzVector& p2, const LorentzVector& p3, 
          DecayChannel decayChannel) const;
 
+  cLorentzVector
+  comp_J2(const LorentzVector& p1, const LorentzVector& p2, const LorentzVector& p3, 
+          DecayChannel decayChannel) const;
+
+  PolarimetricVectorTau2a1::cdouble
+  comp_Fi(unsigned i,
+          const LorentzVector& p1, const LorentzVector& p2, const LorentzVector& p3,
+          DecayChannel decayChannel) const;
+
   /**
    * @brief Compute "running mass" of a1 meson.
    *        The "running mass" of the a1 meson can only be computed for non-zero values of the a1 size parameter R.
@@ -172,6 +181,9 @@ class PolarimetricVectorTau2a1
   // cf. Eq. (3) of Phys.Rev.D 61 (2000) 012002
   std::vector<cdouble> beta_;
 
+  // metric tensor g^{mu,nu} = g_{mu,nu}
+  cTensor g_;
+  
   // verbosity:
   //   -1 no output
   //    1 minimal output
