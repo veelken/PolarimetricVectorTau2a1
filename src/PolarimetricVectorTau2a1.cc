@@ -1,7 +1,6 @@
 #include "TauAnalysis/PolarimetricVectorTau2a1/interface/PolarimetricVectorTau2a1.h"
 
 #include "TMath.h"   // TMath::Pi()
-#include "TString.h" // Form()
 
 #include <assert.h>  // assert()
 #include <cmath>     // pow(), std::cos(), std::fabs(), std::sin()
@@ -50,14 +49,8 @@ PolarimetricVectorTau2a1::PolarimetricVectorTau2a1()
 
   // define mass and width of a1(1260) meson;
   // values are taken from column "nominal fit" in Table VI of Phys.Rev.D 61 (2000) 012002
-  //m0_a1_          = 1.331;    // [GeV]
-  //Gamma0_a1_      = 0.814;    // [GeV]
-  // values are taken from Prog. Theor. Exp. Phys. 2022 (2022) 083C01 (PDG)
-  //m0_a1_          = 1.230;    // [GeV]
-  //Gamma0_a1_      = 0.420;    // [GeV]
-  // values are taken from FA1A1P function in TAUOLA code
-  m0_a1_          = 1.275;    // [GeV]
-  Gamma0_a1_      = 0.700;    // [GeV]
+  m0_a1_          = 1.331;    // [GeV]
+  Gamma0_a1_      = 0.814;    // [GeV]
 
   // define parameters specifying "running" of a1 width;
   // the values of Gamma_a1 as function of s have been taken from Fig. 9 (b) of Phys.Rev.D 61 (2000) 012002
@@ -401,7 +394,7 @@ PolarimetricVectorTau2a1::comp_J(const LorentzVector& p1, const LorentzVector& p
   }
   else
   {
-    std::cerr << "Error in <PolarimetricVectorTau2a1::J>: Invalid parameter 'decayChannel' = " << decayChannel << " !!\n";
+    std::cerr << "Error in <PolarimetricVectorTau2a1::comp_J>: Invalid parameter 'decayChannel' = " << decayChannel << " !!\n";
     assert(0);
   }
   
