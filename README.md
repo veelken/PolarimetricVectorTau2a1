@@ -5,5 +5,6 @@ Numeric computation of polarimetric vector for tau->a1->pi- pi0 pi0 nu and tau->
 
 ```bash
 git clone https://github.com/TTauSpin/PolarimetricVectorTau2a1 $CMSSW_BASE/src/TauAnalysis/PolarimetricVectorTau2a1
+cd $CMSSW_BASE/src/TauAnalysis/PolarimetricVectorTau2a1
 git remote set-url origin git+ssh://git@github.com/TTauSpin/PolarimetricVectorTau2a1
 ```
